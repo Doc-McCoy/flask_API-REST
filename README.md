@@ -7,4 +7,4 @@ Necessita de user e senha para autenticação.
 Exemplos de uso:
 
 - Visualisar todas as tasks:
-curl -u renan:python -i http://localhost:5000/todo/api/v1.0/tasks/
+`curl -u renan:python -i http://localhost:5000/todo/api/v1.0/tasks/`
