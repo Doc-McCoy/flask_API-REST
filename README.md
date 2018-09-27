@@ -2,6 +2,8 @@
 
 API simples feita em Python usando flask, seguindo [este](https://blog.miguelgrinberg.com/post/designing-a-restful-api-with-python-and-flask) tutorial.
 
+Trata-se de uma lista todo, onde você pode visualisar, inserir, editar, e apagar tasks.
+
 Necessita de user e senha para autenticação.
 
 Exemplos de uso:
