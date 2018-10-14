@@ -1,23 +1,33 @@
 #!python3
 from flask import Flask, jsonify, abort, make_response, request, url_for
 from flask_httpauth import HTTPBasicAuth
+from flask_sqlalchemy import SQLAlchemy
 
 app  = Flask(__name__)
 auth = HTTPBasicAuth()
 
-tasks = [
-    {
-        'id' : 1,
-        'title'         : 'Buy groceries',
-        'description'   : 'Milk, Cheese, Pizza, Fruit, Tylenol',
-        'done'          : False
-    },{
-        'id'            : 2,
-        'title'         : 'Learn Python',
-        'description'   : 'Need to find a good Python tutorial on the web',
-        'done'          : False
-    },
-]
+# Informaçoes do banco de dados para o SQLAlchemy fazer a conexao
+SQLALCHEMY_DATABASE_URI = "mysql+mysqlconnector://{username}:{password}@{hostname}/{databasename}".format(
+    username="DocMcCoy",
+    password="senha123",
+    hostname="DocMcCoy.mysql.pythonanywhere-services.com",
+    databasename="DocMcCoy$tasks",
+)
+# Configuracoes do SQLAlchemy
+app.config["SQLALCHEMY_DATABASE_URI"] = SQLALCHEMY_DATABASE_URI
+app.config["SQLALCHEMY_POOL_RECYCLE"] = 299
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+
+# Instanciar o DB
+db = SQLAlchemy(app)
+
+# Classe que sera armazenada no banco, com seus respectivos campos
+class Tasks(db.Model):
+    __tablename__   = "tasks"
+    id              = db.Column(db.Integer, primary_key=True)
+    title           = db.Column(db.VARCHAR(length=50), nullable=False)
+    description     = db.Column(db.TEXT(), nullable=True)
+    done            = db.Column(db.Integer(), nullable=False)
 
 def make_public_task(task):
     new_task = {}
@@ -31,7 +41,8 @@ def make_public_task(task):
 @app.route('/todo/api/v1.0/tasks/')
 @auth.login_required
 def get_tasks():
-    return jsonify({'tasks': [make_public_task(task) for task in tasks]})
+    # return jsonify({'tasks': [make_public_task(task) for task in tasks]})
+    return jsonify(Tasks.query.all())
 
 @app.route('/todo/api/v1.0/tasks/<int:task_id>', methods=['GET'])
 @auth.login_required
